@@ -1,8 +1,9 @@
 
 # coding: utf-8
 
-import  tensorflow as tf
-from  tensorflow.contrib import  crf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+import crf_compat as crf
 import  random
 tf.reset_default_graph()
 class BiLSTM_CRF(object):
@@ -33,21 +34,22 @@ class BiLSTM_CRF(object):
                 #labels = tf.reshape(input_y,shape=[-1,self.sentence_len],name='labels')
                 #labels = tf.reshape(input_y,shape=[-1,self.tag_nums],name='labels')
                 labels = tf.reshape(self.input_y,shape=[self.batch_size,self.sentence_len],name='labels')
-                fw_lstm_cell =tf.nn.rnn_cell.LSTMCell(self.hidden_nums)
-                bw_lstm_cell = tf.nn.rnn_cell.LSTMCell(self.hidden_nums)
+                from tensorflow.python.ops.rnn_cell_impl import LSTMCell as LegacyLSTMCell
+                fw_lstm_cell = LegacyLSTMCell(self.hidden_nums)
+                bw_lstm_cell = LegacyLSTMCell(self.hidden_nums)
                 #双向传播
                 output,_state = tf.nn.bidirectional_dynamic_rnn(fw_lstm_cell,bw_lstm_cell,inputs=word_vectors,sequence_length=self.sequence_lengths,dtype=tf.float32)
                 fw_output = output[0]#[batch_size,self.sentence_len,self.hidden_nums]
                 bw_output =output[1]#[batch_size,self.sentence_len,self.hidden_nums]
-                V1=tf.get_variable('V1',dtype=tf.float32,initializer=tf.contrib.layers.xavier_initializer(),shape=[self.hidden_nums,self.hidden_nums])
-                V2=tf.get_variable('V2',dtype=tf.float32,initializer=tf.contrib.layers.xavier_initializer(),shape=[self.hidden_nums,self.hidden_nums])
+                V1=tf.get_variable('V1',dtype=tf.float32,initializer=tf.compat.v1.glorot_uniform_initializer(),shape=[self.hidden_nums,self.hidden_nums])
+                V2=tf.get_variable('V2',dtype=tf.float32,initializer=tf.compat.v1.glorot_uniform_initializer(),shape=[self.hidden_nums,self.hidden_nums])
                 fw_output = tf.reshape(tf.matmul(tf.reshape(fw_output,[-1,self.hidden_nums],name='Lai') , V1),shape=tf.shape(output[0]))
                 bw_output = tf.reshape(tf.matmul( tf.reshape(bw_output,[-1,self.hidden_nums],name='Rai') , V2),shape=tf.shape(output[1]))
                 contact = tf.concat([fw_output,bw_output],-1,name='bi_lstm_concat')#[batch_size,self.sentence_len,2*self.hidden_nums]
                 contact = tf.nn.dropout(contact,self.dropout_keep_prob)
                 s=tf.shape(contact)
                 contact_reshape=tf.reshape(contact,shape=[-1,2*self.hidden_nums],name='contact')
-                W_lstm=tf.get_variable('W_lstm',dtype=tf.float32,initializer=tf.contrib.layers.xavier_initializer(),shape=[2*self.hidden_nums,self.tag_nums],trainable=True)
+                W_lstm=tf.get_variable('W_lstm',dtype=tf.float32,initializer=tf.compat.v1.glorot_uniform_initializer(),shape=[2*self.hidden_nums,self.tag_nums],trainable=True)
                 b_lstm=tf.get_variable('b_lstm',initializer=tf.zeros(shape=[self.tag_nums]))
                 p=tf.nn.relu(tf.matmul(contact_reshape,W_lstm)+b_lstm)
                 #logit= tf.reshape(p,shape=[-1,s[1],self.tag_nums],name='omit_matrix')

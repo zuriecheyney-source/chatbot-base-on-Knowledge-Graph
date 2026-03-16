@@ -1,7 +1,8 @@
 
 # coding: utf-8
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 import os
 import time
@@ -9,7 +10,7 @@ import datetime
 from classifyUtils import data_process
 from text_cnn import TextCNN
 import math
-from tensorflow.contrib import learn
+# from tensorflow.contrib import learn
 import jieba 
 
 #tf.reset_default_graph()

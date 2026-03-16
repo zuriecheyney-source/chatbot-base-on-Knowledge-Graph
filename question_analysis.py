@@ -1,7 +1,8 @@
 
 # coding: utf-8
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from classifyApp import classifyApplication
 from nerApp import nerAppication
 import os

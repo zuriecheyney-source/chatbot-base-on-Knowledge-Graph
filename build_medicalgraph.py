@@ -3,13 +3,14 @@
 
 import os
 import json
-from py2neo import Graph,Node
+from py2neo import Graph, Node
+from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 class MedicalGraph:
     def __init__(self):
         cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
         self.data_path = os.path.join(cur_dir, 'data/medical.json')
-        self.g =Graph("bolt://localhost:7687",auth=("neo4j","frozen-mega-clean-lily-journal-5966"))
+        self.g = Graph(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
     '''读取文件'''
     def read_nodes(self):

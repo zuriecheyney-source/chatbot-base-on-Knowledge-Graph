@@ -1,7 +1,8 @@
 #coding=utf-8
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 
 class TextCNN(object):
@@ -71,7 +72,7 @@ class TextCNN(object):
                 W = tf.get_variable(
                             "W",
                             shape=[num_filters_total, self.num_classes],
-                            initializer=tf.contrib.layers.xavier_initializer())
+                            initializer=tf.compat.v1.glorot_uniform_initializer())
                 b = tf.Variable(tf.constant(0.1, shape=[self.num_classes]), name="b")
                 l2_loss += tf.nn.l2_loss(W)
                 l2_loss += tf.nn.l2_loss(b)
@@ -89,5 +90,5 @@ class TextCNN(object):
 
             #Precission Recall F1_score
             with tf.name_scope("confusion_matrix"):
-                self.confusion_matrix = tf.contrib.metrics.confusion_matrix(self.predictions, tf.argmax(self.input_y, 1), num_classes=self.num_classes,dtype=tf.int32, name="confusion_matrix", weights=None)
+                self.confusion_matrix = tf.math.confusion_matrix(self.predictions, tf.argmax(self.input_y, 1), num_classes=self.num_classes, name="confusion_matrix", weights=None)
   

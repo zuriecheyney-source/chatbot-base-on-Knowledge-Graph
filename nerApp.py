@@ -1,8 +1,8 @@
 
 # coding: utf-8
 
-import  tensorflow as tf
-from  tensorflow.contrib import  crf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import  random
 from  nerUtils import *
 import logging

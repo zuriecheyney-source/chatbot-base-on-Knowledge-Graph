@@ -1,10 +1,11 @@
 # coding: utf-8
 
 from py2neo import Graph
+from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 class AnswerSearcher:
     def __init__(self):
-        self.g = Graph("bolt://localhost:7687",auth=("neo4j","frozen-mega-clean-lily-journal-5966"))
+        self.g = Graph(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
         self.num_limit = 20
 
     '''执行cypher查询，并返回相应结果'''
