@@ -119,12 +119,6 @@ NEO4J_PASSWORD=your_password
 
 ---
 
-## 6. 许可证与引用
-本项目基于毕业设计开发。相关深度学习算法参考自学术界经典论文：
-- *Bidirectional LSTM-CRF Models for Sequence Tagging*
-- *Convolutional Neural Networks for Sentence Classification*
-
----
 
 ### 参考资料
 
